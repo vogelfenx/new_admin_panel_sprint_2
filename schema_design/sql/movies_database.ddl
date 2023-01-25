@@ -30,7 +30,7 @@ CREATE TABLE IF NOT EXISTS content.genre_film_work (
   id UUID PRIMARY KEY,
   genre_id UUID not null,
   film_work_id UUID not null,
-  created TIMESTAMP WITH TIME ZONE,
+  created TIMESTAMP WITH TIME ZONE
 );
 
 CREATE TABLE IF NOT EXISTS content.person_film_work (
