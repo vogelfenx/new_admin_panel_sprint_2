@@ -15,10 +15,14 @@ class PersonAdmin(admin.ModelAdmin):
 
 class GenreFilmWorkInline(admin.TabularInline):
     model = GenreFilmwork
+    verbose_name = 'Жанр'
+    verbose_name_plural = 'Жанры фильма'
 
 
 class PersonFilmworkInline(admin.TabularInline):
     model = PersonFilmwork
+    verbose_name = 'Персона'
+    verbose_name_plural = 'Персоны фильма'
 
 
 @admin.register(Filmwork)
