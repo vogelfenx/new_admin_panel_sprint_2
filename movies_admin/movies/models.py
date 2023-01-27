@@ -1,6 +1,7 @@
 import uuid
 
 from django.db import models
+from django.core.validators import MinValueValidator, MaxValueValidator
 
 
 class TimeStampedMixin(models.Model):
@@ -41,7 +42,10 @@ class Filmwork(UUIDMixin, TimeStampedMixin):
     title = models.CharField('Название', max_length=255)
     description = models.TextField('Описание', blank=True)
     creation_date = models.DateField('Дата выхода', blank=True)
-    rating = models.FloatField('Рейтинг', blank=True)
+    rating = models.FloatField('Рейтинг', blank=True, validators=[
+        MinValueValidator(0),
+        MaxValueValidator(100),
+    ])
     type = models.CharField('Тип', max_length=1, choices=FilmworkTypes.choices)
 
     class Meta:
