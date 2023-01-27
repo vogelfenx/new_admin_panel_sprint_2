@@ -3,12 +3,24 @@ import uuid
 from django.db import models
 
 
-class Genre(models.Model):
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    name = models.CharField('Имя', max_length=255)
-    description = models.TextField('Описание', blank=True)
+class TimeStampedMixin(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     modified = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        abstract = True
+
+
+class UUIDMixin(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+
+    class Meta:
+        abstract = True
+
+
+class Genre(UUIDMixin, TimeStampedMixin):
+    name = models.CharField('Имя', max_length=255)
+    description = models.TextField('Описание', blank=True)
 
     class Meta:
         db_table = 'content"."genre'
@@ -19,7 +31,7 @@ class Genre(models.Model):
         return self.name
 
 
-class Filmwork(models.Model):
+class Filmwork(UUIDMixin, TimeStampedMixin):
 
     class FilmworkTypes(models.TextChoices):
         MOVIE = 'F', 'Фильм'
@@ -31,8 +43,6 @@ class Filmwork(models.Model):
     creation_date = models.DateField('Дата выхода', blank=True)
     rating = models.FloatField('Рейтинг', blank=True)
     type = models.CharField('Тип', max_length=1, choices=FilmworkTypes.choices)
-    created = models.DateTimeField(auto_now_add=True)
-    modified = models.DateTimeField(auto_now=True)
 
     class Meta:
         db_table = 'content"."film_work'
