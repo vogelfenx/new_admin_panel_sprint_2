@@ -17,6 +17,10 @@ class GenreFilmWorkInline(admin.TabularInline):
     model = GenreFilmwork
 
 
+class PersonFilmworkInline(admin.TabularInline):
+    model = PersonFilmwork
+
+
 @admin.register(Filmwork)
 class FilmworkAdmin(admin.ModelAdmin):
-    inlines = (GenreFilmWorkInline,)
+    inlines = (GenreFilmWorkInline, PersonFilmworkInline)
