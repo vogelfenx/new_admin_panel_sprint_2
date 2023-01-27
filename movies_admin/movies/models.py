@@ -32,6 +32,18 @@ class Genre(UUIDMixin, TimeStampedMixin):
         return self.name
 
 
+class Person(UUIDMixin, TimeStampedMixin):
+    full_name = models.CharField('Полное имя', max_length=255)
+
+    class Meta:
+        db_table = 'content"."person'
+        verbose_name = 'Персона'
+        verbose_name_plural = 'Персоны'
+
+    def __str__(self):
+        return self.full_name
+
+
 class Filmwork(UUIDMixin, TimeStampedMixin):
 
     class FilmworkTypes(models.TextChoices):
