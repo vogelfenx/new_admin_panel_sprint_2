@@ -60,7 +60,7 @@ class Filmwork(UUIDMixin, TimeStampedMixin):
     ])
     type = models.CharField('Тип', max_length=1, choices=FilmworkTypes.choices)
     genres = models.ManyToManyField(Genre, through='GenreFilmwork')
-    persons = models.ManyToManyField(Person, through='PersonFilmwork')
+    persons = models.ManyToManyField(Person, related_name='filmworks', through='PersonFilmwork')
 
     class Meta:
         db_table = 'content"."film_work'
