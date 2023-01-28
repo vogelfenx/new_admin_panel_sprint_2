@@ -22,4 +22,5 @@ include(
     'components/localization.py',
     'components/auth.py',
     'components/templates.py',
+    'components/logging.py',
 )
