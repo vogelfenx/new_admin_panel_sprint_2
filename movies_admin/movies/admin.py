@@ -15,10 +15,6 @@ class PersonFilmworkInline(admin.TabularInline):
     verbose_name_plural = 'Персоны фильма'
 
 
-@admin.register(Genre)
-class GenreAdmin(admin.ModelAdmin):
-    pass
-
 
 @admin.register(Person)
 class PersonAdmin(admin.ModelAdmin):
@@ -33,3 +29,10 @@ class FilmworkAdmin(admin.ModelAdmin):
     list_filter = ('type', )
 
     search_fields = ('title', 'description', 'id')
+
+
+@admin.register(Genre)
+class GenreAdmin(admin.ModelAdmin):
+    list_display = ('name', 'description')
+    search_fields = ('name', 'description')
+
