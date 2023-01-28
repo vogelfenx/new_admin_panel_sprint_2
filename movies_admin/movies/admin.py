@@ -28,3 +28,8 @@ class PersonFilmworkInline(admin.TabularInline):
 @admin.register(Filmwork)
 class FilmworkAdmin(admin.ModelAdmin):
     inlines = (GenreFilmWorkInline, PersonFilmworkInline)
+
+    list_display = ('title', 'type', 'creation_date', 'rating')
+    list_filter = ('type', )
+
+    search_fields = ('title', 'description', 'id')
