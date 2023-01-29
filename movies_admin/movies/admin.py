@@ -1,6 +1,7 @@
 from django.contrib import admin
 from django.urls import reverse
 from django.utils.html import mark_safe
+from django.utils.translation import gettext_lazy as _
 
 from movies.models import (Filmwork, Genre, GenreFilmwork, Person,
                            PersonFilmwork)
@@ -8,14 +9,12 @@ from movies.models import (Filmwork, Genre, GenreFilmwork, Person,
 
 class GenreFilmWorkInline(admin.TabularInline):
     model = GenreFilmwork
-    verbose_name = 'Жанр'
-    verbose_name_plural = 'Жанры фильма'
+    verbose_name_plural = _('genres')
 
 
 class PersonFilmworkInline(admin.TabularInline):
     model = PersonFilmwork
-    verbose_name = 'Персона'
-    verbose_name_plural = 'Персоны фильма'
+    verbose_name_plural = _('persons')
 
 
 @admin.register(Filmwork)
