@@ -20,9 +20,12 @@ CREATE TABLE IF NOT EXISTS content.genre (
     modified TIMESTAMP WITH TIME ZONE
 );
 
+CREATE TYPE gender AS ENUM ('male', 'female');
+
 CREATE TABLE IF NOT EXISTS content.person (
     id UUID PRIMARY KEY,
     full_name TEXT NOT NULL,
+    gender public.gender NULL,
     created TIMESTAMP WITH TIME ZONE,
     modified TIMESTAMP WITH TIME ZONE
 );
