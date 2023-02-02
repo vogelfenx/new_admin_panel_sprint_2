@@ -24,8 +24,9 @@ class SQLiteExtractor:
         columns = ','.join(columns)
         cursor.execute(f'SELECT {columns} FROM {from_table}')
 
-        data = cursor.fetchall()
-        print(dict(data[0]))
+        fetched_rows = cursor.fetchall()
+
+        return (fetched_rows)
 
     def _check_table_consistency(self, *, table_name):
         sql_query = """
