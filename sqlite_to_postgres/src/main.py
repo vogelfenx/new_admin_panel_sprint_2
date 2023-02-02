@@ -1,13 +1,15 @@
 import os
 import sqlite3
-from contextlib import closing, contextmanager
+from contextlib import closing
 
 import dotenv
 import psycopg2
 from psycopg2.extensions import connection as _connection
 from psycopg2.extras import DictCursor
 
-from sqlite_db_handler import SQLiteExtractor
+from database import sqlite
+from database.sqlite_db_handler import SQLiteExtractor
+from database.table_dataclasses import TableMetadata
 
 dotenv.load_dotenv()
 
@@ -17,14 +19,22 @@ def load_from_sqlite(sqlite_conn: sqlite3.Connection, pg_conn: _connection):
     sqlite_extractor = SQLiteExtractor(sqlite_conn)
     # postgres_saver = PostgresSaver(pg_conn)
 
-    data = sqlite_extractor.extract_data(from_table='genre',
-                                         columns=(
-                                             'id',
-                                             'name',
-                                             'description',
-                                             'created_at',
-                                             'updated_at',
-                                         ))
+    tables_meta_sqlite = {
+        TableMetadata('person', sqlite.Person.get_fields(), sqlite.Person),
+        TableMetadata('genre', sqlite.Genre.get_fields(), sqlite.Genre),
+    }
+
+    for table_meta in tables_meta_sqlite:
+        table_data = sqlite_extractor.extract_data(
+            from_table=table_meta.table_name, columns=table_meta.columns,
+        )
+
+        dataclass_objects = ()
+        for row_data in table_data:
+            dataclass_object = table_meta.data_class(**row_data)
+            dataclass_objects += (dataclass_object, )
+
+        print(f'Table {dataclass_objects[0].__class__} has {len(dataclass_objects)} records')
     # postgres_saver.save_all_data(data)
 
 
@@ -42,4 +52,3 @@ if __name__ == '__main__':
     with closing(sqlite3.connect(dsn_sqlite)) as sqlite_conn:
         with closing(psycopg2.connect(**dsn_postgres, cursor_factory=DictCursor)) as pg_conn:
             load_from_sqlite(sqlite_conn, pg_conn)
-            pass
