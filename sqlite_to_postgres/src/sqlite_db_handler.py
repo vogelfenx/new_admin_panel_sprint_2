@@ -14,6 +14,19 @@ class SQLiteExtractor:
         self.connection.row_factory = sqlite3.Row
         self.cursor = connection.cursor()
 
+    def extract_data(self, *, from_table, columns):
+        cursor = self.cursor
+
+        self._check_table_consistency(table_name=from_table)
+
+        self._check_columns_consistency(columns=columns, table=from_table)
+
+        columns = ','.join(columns)
+        cursor.execute(f'SELECT {columns} FROM {from_table}')
+
+        data = cursor.fetchall()
+        print(dict(data[0]))
+
     def _check_table_consistency(self, *, table_name):
         sql_query = """
         SELECT
@@ -43,16 +56,3 @@ class SQLiteExtractor:
 
         if not all(column in columns_in_table for column in columns):
             raise sqlite3.OperationalError('Columns do not match the columns in the table.')
-
-    def extract_data(self, *, from_table, columns):
-        cursor = self.cursor
-
-        self._check_table_consistency(table_name=from_table)
-
-        self._check_columns_consistency(columns=columns, table=from_table)
-
-        columns = ','.join(columns)
-        cursor.execute(f'SELECT {columns} FROM {from_table}')
-
-        data = cursor.fetchall()
-        print(dict(data[0]))
