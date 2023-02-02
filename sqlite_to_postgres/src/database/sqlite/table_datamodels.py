@@ -1,7 +1,7 @@
 import datetime
 from dataclasses import dataclass
 
-from database import GenreMixin, PersonMixin, TableMetadata, UUIDMixin
+from database import BasicDataClass, GenreMixin, PersonMixin, UUIDMixin
 
 
 @dataclass(frozen=True)
@@ -11,10 +11,10 @@ class TimestampMixin:
 
 
 @dataclass(frozen=True)
-class Genre(TimestampMixin, GenreMixin, UUIDMixin):
+class Genre(TimestampMixin, GenreMixin, UUIDMixin, BasicDataClass):
     pass
 
 
 @dataclass(frozen=True)
-class Person(TimestampMixin, PersonMixin, UUIDMixin):
+class Person(TimestampMixin, PersonMixin, UUIDMixin, BasicDataClass):
     pass
