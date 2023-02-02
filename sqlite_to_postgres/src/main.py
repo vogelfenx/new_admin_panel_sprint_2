@@ -8,7 +8,7 @@ from psycopg2.extensions import connection as _connection
 from psycopg2.extras import DictCursor
 
 from database import sqlite
-from database.sqlite_db_handler import SQLiteExtractor
+from database.sqlite import SQLiteExtractor
 from database.table_dataclasses import TableMetadata
 
 dotenv.load_dotenv()
