@@ -16,11 +16,14 @@ class PostgresConnection:
     def insert_data(self, *, table_metadata, table_rows):
 
         table_name = table_metadata.table_name
+        table_columns = table_metadata.target_db_columns
+
         self._check_table_consistency(table_name=table_name)
+        self._check_columns_consistency(columns=table_columns, table=table_name)
 
-        column_names = ','.join(table_metadata.target_db_columns)
+        column_names = ','.join(table_columns)
 
-        columns_count = len(table_metadata.target_db_columns)
+        columns_count = len(table_columns)
         parameter_placeholders = ['%s' for _ in range(columns_count)]
         parameter_placeholders = ','.join(parameter_placeholders)
 
@@ -52,3 +55,22 @@ class PostgresConnection:
 
         if not is_table_exists:
             raise psycopg2.OperationalError(f"table doesn't exist: {table_name}")
+
+    def _check_columns_consistency(self, *, columns, table):
+        sql_query = """
+        SELECT
+            column_name
+        FROM
+            information_schema.columns
+        WHERE
+            table_name = %s
+        """
+
+        self.cursor.execute(sql_query, (table, ))
+        columns_in_table = self.cursor.fetchall()
+
+        columns_in_table = [column[0] for column in columns_in_table]
+
+        if not all(column in columns_in_table for column in columns):
+            raise psycopg2.OperationalError(
+                f"Columns [ {columns} ] do not match the columns [ {list(columns_in_table)} ] in the table [ '{table}' ].")
