@@ -14,7 +14,10 @@ class PostgresConnection:
         self.connection.close()
 
     def insert_data(self, *, table_metadata, table_rows):
+
         table_name = table_metadata.table_name
+        self._check_table_consistency(table_name=table_name)
+
         column_names = ','.join(table_metadata.target_db_columns)
 
         columns_count = len(table_metadata.target_db_columns)
@@ -33,3 +36,19 @@ class PostgresConnection:
         """
         self.cursor.execute(sql_query)
         self.connection.commit()
+
+    def _check_table_consistency(self, *, table_name):
+        sql_query = """
+        SELECT EXISTS (
+            SELECT FROM
+            pg_tables
+        WHERE
+            tablename  = %s
+        );
+        """
+
+        self.cursor.execute(sql_query, (table_name, ))
+        is_table_exists = self.cursor.fetchone()[0]
+
+        if not is_table_exists:
+            raise psycopg2.OperationalError(f"table doesn't exist: {table_name}")
