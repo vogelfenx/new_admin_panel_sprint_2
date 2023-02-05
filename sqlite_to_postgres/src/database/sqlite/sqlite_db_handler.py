@@ -61,7 +61,8 @@ class SQLiteConnection:
         self.cursor.execute(sql_query, (table, ))
         columns_in_table = self.cursor.fetchall()
 
-        columns_in_table = (column[0] for column in columns_in_table)
+        columns_in_table = [column[0] for column in columns_in_table]
 
         if not all(column in columns_in_table for column in columns):
-            raise sqlite3.OperationalError('Columns do not match the columns in the table.')
+            raise sqlite3.OperationalError(
+                f"Columns [ {columns} ] do not match the columns [ {list(columns_in_table)} ] in the table [ '{table}' ].")
