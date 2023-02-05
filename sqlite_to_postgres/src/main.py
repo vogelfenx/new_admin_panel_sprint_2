@@ -8,7 +8,8 @@ from psycopg2.extensions import connection as _connection
 from psycopg2.extras import DictCursor
 
 from database import sqlite
-from database.sqlite import SQLiteExtractor
+from database.postgres import PostgresConnection
+from database.sqlite import SQLiteConnection
 from database.table_dataclasses import TableMetadata
 import configparser
 
