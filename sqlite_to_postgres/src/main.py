@@ -1,3 +1,4 @@
+import configparser
 import os
 from contextlib import closing
 
@@ -6,7 +7,6 @@ import dotenv
 from database.postgres import PostgresConnection
 from database.sqlite import SQLiteConnection
 from database.table_dataclasses import TableMetadata
-import configparser
 
 
 def load_from_sqlite(sqlite_conn: SQLiteConnection, pg_conn: PostgresConnection, chunk_size):
