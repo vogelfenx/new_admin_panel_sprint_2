@@ -1,2 +1,1 @@
-from .table_dataclasses import (BasicDataClass, GenreMixin, PersonMixin,
-                                TableMetadata, UUIDMixin)
+from .table_dataclasses import TableMetadata
