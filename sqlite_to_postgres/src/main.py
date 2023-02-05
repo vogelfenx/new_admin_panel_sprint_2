@@ -10,8 +10,7 @@ from psycopg2.extras import DictCursor
 from database import sqlite
 from database.sqlite import SQLiteExtractor
 from database.table_dataclasses import TableMetadata
-
-dotenv.load_dotenv()
+import configparser
 
 
 def load_from_sqlite(sqlite_conn: SQLiteConnection, pg_conn: PostgresConnection, chunk_size):
@@ -47,7 +46,11 @@ def load_from_sqlite(sqlite_conn: SQLiteConnection, pg_conn: PostgresConnection,
             #############
 
         # print(f'Table {dataclass_objects[0].__class__} has {len(dataclass_objects)} records')
+if __name__ == '__main__':
+    dotenv.load_dotenv()
 
+    config = configparser.ConfigParser()
+    config.read('app.ini')
 
     dsn_sqlite = 'db.sqlite'
     dsn_postgres = {
