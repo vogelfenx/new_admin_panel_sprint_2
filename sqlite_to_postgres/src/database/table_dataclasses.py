@@ -8,8 +8,8 @@ class TableMetadata:
     """Store database table metadata."""
 
     table_name: str
-    columns: tuple[str, list]
-    data_class: object
+    source_db_columns: tuple[str, list]
+    target_db_columns: tuple[str, list]
 
 
 @dataclass(frozen=True)
