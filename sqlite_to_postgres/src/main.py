@@ -41,10 +41,8 @@ def load_from_sqlite(sqlite_conn: SQLiteConnection, pg_conn: PostgresConnection,
                 is_table_fetch_empty = True
                 break
 
+            pg_conn.insert_data(table_metadata=table_meta, table_rows=table_rows)
 
-            #############
-            # postgres_saver.save_all_data(data)
-            #############
 
 if __name__ == '__main__':
     dotenv.load_dotenv()
