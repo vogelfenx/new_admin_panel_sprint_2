@@ -14,10 +14,8 @@ from database.table_dataclasses import TableMetadata
 dotenv.load_dotenv()
 
 
-def load_from_sqlite(sqlite_conn: sqlite3.Connection, pg_conn: _connection, chunk_size):
+def load_from_sqlite(sqlite_conn: SQLiteConnection, pg_conn: PostgresConnection, chunk_size):
     """Основной метод загрузки данных из SQLite в Postgres."""
-    sqlite_extractor = SQLiteExtractor(sqlite_conn)
-    # postgres_saver = PostgresSaver(pg_conn)
 
     tables_meta_sqlite = {
         TableMetadata('person', sqlite.Person.get_fields(), sqlite.Person),
@@ -51,7 +49,7 @@ def load_from_sqlite(sqlite_conn: sqlite3.Connection, pg_conn: _connection, chun
         # print(f'Table {dataclass_objects[0].__class__} has {len(dataclass_objects)} records')
 
 
-if __name__ == '__main__':
+    dsn_sqlite = 'db.sqlite'
     dsn_postgres = {
         'dbname': 'movies_database',
         'user': os.getenv('PG_USER'),
@@ -60,8 +58,7 @@ if __name__ == '__main__':
         'port': os.getenv('PG_PORT'),
         'options': '-c search_path=content',
     }
-    dsn_sqlite = 'db.sqlite'
 
-    with closing(sqlite3.connect(dsn_sqlite)) as sqlite_conn:
-        with closing(psycopg2.connect(**dsn_postgres, cursor_factory=DictCursor)) as pg_conn:
-            load_from_sqlite(sqlite_conn, pg_conn, chunk_size=10)
+    with closing(SQLiteConnection(dsn_sqlite)) as sqlite_conn:
+        with closing(PostgresConnection(dsn_postgres)) as pg_conn:
+            load_from_sqlite(sqlite_conn, pg_conn, chunk_size=2000)

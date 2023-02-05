@@ -1,19 +1,23 @@
 import sqlite3
 
 
-class SQLiteExtractor:
+class SQLiteConnection:
     """SQLiteExtractor."""
 
-    def __init__(self, connection: sqlite3.Connection):
+    def __init__(self, dsn: dict):
         """_summary_.
 
         Args:
             connection (sqlite3.Connection): _description_
         """
-        self.connection = connection
-        self.connection.row_factory = sqlite3.Row
-        self.cursor = connection.cursor()
+        self.connection = sqlite3.connect(dsn)
+        # self.connection.row_factory = sqlite3.Row
+
+        self.cursor = self.connection.cursor()
         self.offset = 0
+
+    def close(self):
+        self.connection.close()
 
     def extract_data(self, *, from_table, columns, chunk_size):
         chunk_size = int(chunk_size)
