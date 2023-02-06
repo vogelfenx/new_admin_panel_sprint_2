@@ -1,10 +1,16 @@
 import psycopg2
 from psycopg2.extras import DictCursor
+from database import TableMetadata
 
 
 class PostgresConnection:
 
     def __init__(self, dsn: dict):
+        """Postgres database handler
+
+        Args:
+            dsn (dict): data source name for postgres connection
+        """
         self.connection = psycopg2.connect(**dsn, cursor_factory=DictCursor)
 
         self.cursor = self.connection.cursor()
@@ -13,8 +19,13 @@ class PostgresConnection:
     def close(self):
         self.connection.close()
 
-    def insert_data(self, *, table_metadata, table_rows):
+    def insert_data(self, *, table_metadata: TableMetadata, table_rows: list):
+        """Insert rows to specified tables in target database.
 
+        Args:
+            table_metadata (TableMetadata): target database metadata
+            table_rows (list): rows to be inserted
+        """
         table_name = table_metadata.table_name
         table_columns = table_metadata.target_db_columns
 
@@ -41,6 +52,14 @@ class PostgresConnection:
         self.connection.commit()
 
     def _check_table_consistency(self, *, table_name):
+        """Check if the given table exists.
+
+        Args:
+            table_name (str): name of the table to test
+
+        Raises:
+            OperationalError: Raise exception if table doesn't exist
+        """
         sql_query = """
         SELECT EXISTS (
             SELECT FROM
@@ -57,6 +76,15 @@ class PostgresConnection:
             raise psycopg2.OperationalError(f"table doesn't exist: {table_name}")
 
     def _check_columns_consistency(self, *, columns, table):
+        """Check if the specified columns exist in the given table or not.
+
+        Args:
+            columns (list): columns to test
+            table (str): the table to be searched in
+
+        Raises:
+            OperationalError: Raise if the columns doesn't match the columns in the table
+        """
         sql_query = """
         SELECT
             column_name

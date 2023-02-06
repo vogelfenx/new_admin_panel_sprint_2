@@ -10,8 +10,13 @@ from database.table_dataclasses import TableMetadata
 
 
 def load_from_sqlite(sqlite_conn: SQLiteConnection, pg_conn: PostgresConnection, chunk_size):
-    """Основной метод загрузки данных из SQLite в Postgres."""
+    """Migrate data from sqlite to postgres databases.
 
+    Args:
+        sqlite_conn (SQLiteConnection): sqlite connection instance
+        pg_conn (PostgresConnection): postgres connection instance
+        chunk_size (_type_): size of rows to read/write in a bundle
+    """
     tables_from_config = (table for table in config.sections())
 
     tables_meta_sqlite = ()
