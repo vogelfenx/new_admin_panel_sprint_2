@@ -11,7 +11,6 @@ class SQLiteConnection:
             connection (sqlite3.Connection): _description_
         """
         self.connection = sqlite3.connect(dsn)
-        # self.connection.row_factory = sqlite3.Row
 
         self.cursor = self.connection.cursor()
         self.offset = 0
