@@ -10,11 +10,13 @@ from movies.models import (Filmwork, Genre, GenreFilmwork, Person,
 class GenreFilmWorkInline(admin.TabularInline):
     model = GenreFilmwork
     verbose_name_plural = _('genres')
+    autocomplete_fields = ('genre',)
 
 
 class PersonFilmworkInline(admin.TabularInline):
     model = PersonFilmwork
     verbose_name_plural = _('persons')
+    autocomplete_fields = ('person',)
 
 
 @admin.register(Filmwork)

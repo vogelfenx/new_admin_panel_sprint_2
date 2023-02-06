@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-01-29 16:32+0100\n"
+"POT-Creation-Date: 2023-02-06 23:44+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -22,7 +22,7 @@ msgstr ""
 msgid "genres"
 msgstr ""
 
-#: .\movies\admin.py:17 .\movies\models.py:48
+#: .\movies\admin.py:18 .\movies\models.py:48
 msgid "persons"
 msgstr ""
 
@@ -86,12 +86,8 @@ msgstr ""
 msgid "type"
 msgstr ""
 
-#: .\movies\models.py:69
-msgid "certificate"
-msgstr ""
-
 #: .\movies\models.py:70
-msgid "file"
+msgid "certificate"
 msgstr ""
 
 #: .\movies\models.py:76
@@ -103,5 +99,17 @@ msgid "filmworks"
 msgstr ""
 
 #: .\movies\models.py:95
+msgid "Actor"
+msgstr ""
+
+#: .\movies\models.py:96
+msgid "Director"
+msgstr ""
+
+#: .\movies\models.py:97
+msgid "Writer"
+msgstr ""
+
+#: .\movies\models.py:101
 msgid "role"
 msgstr ""
