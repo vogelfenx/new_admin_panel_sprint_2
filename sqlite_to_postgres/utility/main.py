@@ -57,7 +57,7 @@ if __name__ == '__main__':
 
     dsn_sqlite = 'db.sqlite'
     dsn_postgres = {
-        'dbname': 'movies_database',
+        'dbname': os.getenv('PG_DB_NAME'),
         'user': os.getenv('PG_USER'),
         'password': os.getenv('PG_PASSWORD'),
         'host': os.getenv('PG_HOST'),
