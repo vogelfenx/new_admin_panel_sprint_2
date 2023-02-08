@@ -9,7 +9,7 @@ from database.sqlite import SQLiteConnection
 from database.table_dataclasses import TableMetadata
 
 
-def load_from_sqlite(sqlite_conn: SQLiteConnection, pg_conn: PostgresConnection, chunk_size):
+def load_from_sqlite(sqlite_conn: SQLiteConnection, pg_conn: PostgresConnection):
     """Migrate data from sqlite to postgres databases.
 
     Args:
@@ -34,19 +34,12 @@ def load_from_sqlite(sqlite_conn: SQLiteConnection, pg_conn: PostgresConnection,
 
         sqlite_conn.offset = 0
 
-        is_table_fetch_empty = False
-        while not is_table_fetch_empty:
-            table_rows = sqlite_conn.extract_data(
-                from_table=table_meta.table_name,
-                columns=table_meta.source_db_columns,
-                chunk_size=chunk_size,
-            )
+        table_rows = sqlite_conn.extract_data(
+            from_table='peps',
+        )
+        print([*table_rows])
 
-            if not table_rows:
-                is_table_fetch_empty = True
-                break
-
-            pg_conn.insert_data(table_metadata=table_meta, table_rows=table_rows)
+        # pg_conn.insert_data(table_metadata=table_meta, table_rows=table_rows)
 
 
 if __name__ == '__main__':
@@ -55,7 +48,8 @@ if __name__ == '__main__':
     config = configparser.ConfigParser()
     config.read('app.ini')
 
-    dsn_sqlite = 'db.sqlite'
+    sqlite_dbname = os.getenv('SQLITE_DB_NAME')
+
     dsn_postgres = {
         'dbname': os.getenv('PG_DB_NAME'),
         'user': os.getenv('PG_USER'),
@@ -65,6 +59,6 @@ if __name__ == '__main__':
         'options': '-c search_path=content',
     }
 
-    with closing(SQLiteConnection(dsn_sqlite)) as sqlite_conn:
+    with closing(SQLiteConnection(sqlite_dbname, package_limit=1000)) as sqlite_conn:
         with closing(PostgresConnection(dsn_postgres)) as pg_conn:
-            load_from_sqlite(sqlite_conn, pg_conn, chunk_size=2000)
+            load_from_sqlite(sqlite_conn, pg_conn)
