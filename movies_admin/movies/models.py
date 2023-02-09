@@ -54,8 +54,8 @@ class Person(UUIDMixin, TimeStampedMixin):
 class Filmwork(UUIDMixin, TimeStampedMixin):
 
     class FilmworkTypes(models.TextChoices):
-        MOVIE = 'F', _('Movie')
-        TV_SHOW = 'S', _('TV-Show')
+        MOVIE = 'movie', _('Movie')
+        TV_SHOW = 'tv-show', _('TV-Show')
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     title = models.CharField(_('title'), max_length=255)
@@ -65,7 +65,7 @@ class Filmwork(UUIDMixin, TimeStampedMixin):
         MinValueValidator(0),
         MaxValueValidator(100),
     ])
-    type = models.CharField(_('type'), max_length=1, choices=FilmworkTypes.choices)
+    type = models.CharField(_('type'), max_length=25, choices=FilmworkTypes.choices)
     certificate_file_path = models.FileField(
         _('certificate'), blank=True, upload_to='movies/')
     genres = models.ManyToManyField(Genre, through='GenreFilmwork')
