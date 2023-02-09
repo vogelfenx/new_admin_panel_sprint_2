@@ -9,6 +9,7 @@ python-dotenv = "*"
 iso8601 = "*"
 
 [dev-packages]
+memory-profiler = "*"
 
 [requires]
 python_version = "3.9"
