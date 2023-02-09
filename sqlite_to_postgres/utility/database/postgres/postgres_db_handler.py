@@ -7,9 +7,10 @@ from util.logging import logging
 
 
 class PostgresConnection:
+    """PostgreSQL database handler."""
 
     def __init__(self, dsn: dict):
-        """Postgres database handler
+        """Postgres database handler.
 
         Args:
             dsn (dict): data source name for postgres connection
@@ -20,14 +21,17 @@ class PostgresConnection:
         self.offset = 0
 
     def close(self):
+        """Close postgres connection."""
         self.connection.close()
 
     def insert_data(self, *, table: Table):
         """Insert rows to specified tables in target database.
 
         Args:
-            table_rows (list): rows to be inserted
             table (Table): target database table object with references to data class objects
+
+        Raises:
+            error: an psycopg2.Error on table
         """
         table_name = table.table_name
         table_columns = table.table_columns
@@ -54,6 +58,14 @@ class PostgresConnection:
         self.connection.commit()
 
     def remap_fields(self, elem: dict) -> dict:
+        """Rename field names in given dictionary.
+
+        Args:
+            elem (dict): dictionary object
+
+        Returns:
+            dict: dictionary object with renamed fields
+        """
         if 'created_at' in elem.keys():
             elem['created'] = elem['created_at']
             del (elem['created_at'])
@@ -67,7 +79,7 @@ class PostgresConnection:
 
         return elem
 
-    def _check_table_consistency(self, *, table_name):
+    def _check_table_consistency(self, *, table_name: str):
         """Check if the given table exists.
 
         Args:
@@ -91,11 +103,11 @@ class PostgresConnection:
         if not is_table_exists:
             raise psycopg2.OperationalError(f"table doesn't exist: {table_name}")
 
-    def _check_columns_consistency(self, *, columns, table):
+    def _check_columns_consistency(self, *, columns: tuple, table: str):
         """Check if the specified columns exist in the given table or not.
 
         Args:
-            columns (list): columns to test
+            columns (tuple): columns to test
             table (str): the table to be searched in
 
         Raises:

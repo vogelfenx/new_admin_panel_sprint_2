@@ -5,7 +5,7 @@ from util.logging import logging
 
 
 class SQLiteConnection:
-    """SQLiteExtractor."""
+    """SQLite database handler."""
 
     def __init__(self, dsn: str, package_limit: int):
         """SQLite database handler.

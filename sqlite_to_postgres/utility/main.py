@@ -15,7 +15,7 @@ def load_from_sqlite(sqlite_conn: SQLiteConnection, pg_conn: PostgresConnection,
     Args:
         sqlite_conn (SQLiteConnection): sqlite connection instance
         pg_conn (PostgresConnection): postgres connection instance
-        chunk_size (_type_): size of rows to read/write in a bundle
+        tables (dict): mapping of DB tables and data classes to be migrated
     """
 
     for table, dataclass in tables.items():
