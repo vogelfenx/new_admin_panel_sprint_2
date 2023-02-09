@@ -1,7 +1,8 @@
-import psycopg2
-from psycopg2.extras import DictCursor, execute_values
-from database.table_dataclasses import Table
 from dataclasses import asdict
+
+import psycopg2
+from database.table_dataclasses import Table
+from psycopg2.extras import DictCursor, execute_values
 from util.logging import logging
 
 
@@ -45,7 +46,7 @@ class PostgresConnection:
         """
 
         try:
-        execute_values(self.cursor, insert_query, table_values)
+            execute_values(self.cursor, insert_query, table_values)
         except psycopg2.Error as error:
             logging.error('%s: %s', error.__class__.__name__, error)
             raise error
