@@ -135,3 +135,4 @@ dmypy.json
 
 # app stuff
 media/
+sqlite_to_postgres/sandbox
