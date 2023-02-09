@@ -1,6 +1,7 @@
 import psycopg2
-from psycopg2.extras import DictCursor
-from database import TableMetadata
+from psycopg2.extras import DictCursor, execute_values
+from database.table_dataclasses import Table
+from dataclasses import asdict
 
 
 class PostgresConnection:
@@ -19,37 +20,45 @@ class PostgresConnection:
     def close(self):
         self.connection.close()
 
-    def insert_data(self, *, table_metadata: TableMetadata, table_rows: list):
+    def insert_data(self, *, table_metadata: Table):
         """Insert rows to specified tables in target database.
 
         Args:
-            table_metadata (TableMetadata): target database metadata
+            table_metadata (Table): target database metadata
             table_rows (list): rows to be inserted
         """
         table_name = table_metadata.table_name
-        table_columns = table_metadata.target_db_columns
+        table_columns = table_metadata.table_columns
+        data_objects = table_metadata.dataclass_objects
 
         self._check_table_consistency(table_name=table_name)
+
         self._check_columns_consistency(columns=table_columns, table=table_name)
 
-        column_names = ','.join(table_columns)
+        table_columns = ', '.join(col for col in table_columns)
+        table_values = ((list(asdict(data_row).values())) for data_row in data_objects)
 
-        columns_count = len(table_columns)
-        parameter_placeholders = ['%s' for _ in range(columns_count)]
-        parameter_placeholders = ','.join(parameter_placeholders)
-
-        column_values = ()
-        for table_row in table_rows:
-            column_values += ((self.cursor.mogrify(f'({parameter_placeholders})', table_row).decode()),)
-        column_values = ','.join(column_values)
-
-        sql_query = f"""
-        INSERT INTO {table_name} ({column_names})
-        VALUES {column_values}
-        ON CONFLICT (id) DO NOTHING
+        insert_query = f"""
+        INSERT INTO {table_name} ({table_columns}) VALUES %s;
         """
-        self.cursor.execute(sql_query)
+
+        execute_values(self.cursor, insert_query, table_values)
+
         self.connection.commit()
+
+    def remap_fields(self, elem: dict) -> dict:
+        if 'created_at' in elem.keys():
+            elem['created'] = elem['created_at']
+            del (elem['created_at'])
+
+        if 'updated_at' in elem.keys():
+            elem['modified'] = elem['updated_at']
+            del (elem['updated_at'])
+
+        if 'file_path' in elem.keys():
+            del (elem['file_path'])
+
+        return elem
 
     def _check_table_consistency(self, *, table_name):
         """Check if the given table exists.
