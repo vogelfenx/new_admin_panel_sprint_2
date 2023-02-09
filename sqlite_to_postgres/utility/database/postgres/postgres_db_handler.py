@@ -2,6 +2,7 @@ import psycopg2
 from psycopg2.extras import DictCursor, execute_values
 from database.table_dataclasses import Table
 from dataclasses import asdict
+from util.logging import logging
 
 
 class PostgresConnection:
@@ -43,7 +44,11 @@ class PostgresConnection:
         ON CONFLICT DO NOTHING;
         """
 
+        try:
         execute_values(self.cursor, insert_query, table_values)
+        except psycopg2.Error as error:
+            logging.error('%s: %s', error.__class__.__name__, error)
+            raise error
 
         self.connection.commit()
 
