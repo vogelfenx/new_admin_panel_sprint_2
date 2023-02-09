@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-02-06 23:44+0100\n"
+"POT-Creation-Date: 2023-02-09 23:05+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,12 +18,16 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: .\movies\admin.py:12 .\movies\models.py:35
+#: .\movies\admin.py:14 .\movies\models.py:35
 msgid "genres"
 msgstr ""
 
-#: .\movies\admin.py:18 .\movies\models.py:48
+#: .\movies\admin.py:20 .\movies\models.py:48
 msgid "persons"
+msgstr ""
+
+#: .\movies\admin.py:60 .\movies\models.py:77
+msgid "filmworks"
 msgstr ""
 
 #: .\movies\apps.py:8
@@ -92,10 +96,6 @@ msgstr ""
 
 #: .\movies\models.py:76
 msgid "filmwork"
-msgstr ""
-
-#: .\movies\models.py:77
-msgid "filmworks"
 msgstr ""
 
 #: .\movies\models.py:95

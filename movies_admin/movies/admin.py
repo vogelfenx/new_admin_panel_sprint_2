@@ -57,7 +57,7 @@ class PersonAdmin(admin.ModelAdmin):
         )
         return queryset
 
-    @admin.display(description=_('Filmworks'))
+    @admin.display(description=_('filmworks'))
     def get_filmworks(self, person):
         """Return filmworks of the given person.
 
