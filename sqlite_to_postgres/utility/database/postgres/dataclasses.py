@@ -1,0 +1,30 @@
+import uuid
+from dataclasses import dataclass, field
+from datetime import date, datetime
+
+
+@dataclass(frozen=True)
+class MixinId:
+    """Dataclass Mixin to extend dataclasses with id."""
+
+    id: uuid.UUID
+
+
+@dataclass(frozen=True)
+class MixinDate:
+    """Dataclass Mixin to extend dataclasses with date."""
+
+    created: datetime
+    modified: datetime
+
+
+@dataclass(frozen=True)
+class FilmWork(MixinId, MixinDate):
+    """Dataclass for table FilmWork in postgres schema."""
+
+    title: str
+    creation_date: date
+    certificate_file_path: str = field(default='')
+    description: str = field(default='')
+    rating: float = field(default=0)
+    type: str = field(default='')

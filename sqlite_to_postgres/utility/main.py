@@ -1,15 +1,15 @@
-import configparser
 import os
 from contextlib import closing
+from dataclasses import fields
 
 import dotenv
+from database.postgres.dataclasses import FilmWork
+from database.postgres.postgres_db_handler import PostgresConnection
+from database.sqlite.sqlite_db_handler import SQLiteConnection
+from database.table_dataclasses import Table
 
-from database.postgres import PostgresConnection
-from database.sqlite import SQLiteConnection
-from database.table_dataclasses import TableMetadata
 
-
-def load_from_sqlite(sqlite_conn: SQLiteConnection, pg_conn: PostgresConnection):
+def load_from_sqlite(sqlite_conn: SQLiteConnection, pg_conn: PostgresConnection, tables: dict):
     """Migrate data from sqlite to postgres databases.
 
     Args:
@@ -17,27 +17,22 @@ def load_from_sqlite(sqlite_conn: SQLiteConnection, pg_conn: PostgresConnection)
         pg_conn (PostgresConnection): postgres connection instance
         chunk_size (_type_): size of rows to read/write in a bundle
     """
-    tables_from_config = (table for table in config.sections())
 
-    tables_meta_sqlite = ()
-    for table_name in tables_from_config:
-        table_columns = dict(config.items(table_name))
-        tables_meta_sqlite += (
-            TableMetadata(
-                table_name=table_name,
-                source_db_columns=tuple(table_columns.keys()),
-                target_db_columns=tuple(table_columns.values()),
-            ),
-        )
-
-    for table_meta in tables_meta_sqlite:
-
-        sqlite_conn.offset = 0
+    for table, dataclass in tables.items():
 
         table_rows = sqlite_conn.extract_data(
-            from_table='peps',
+            from_table=table,
         )
-        print([*table_rows])
+
+        formatted_rows = (pg_conn.remap_fields(dict(**row)) for row in table_rows)
+        dataclass_objects = (dataclass(**row) for row in formatted_rows)
+
+        dataclass_fields = tuple(field.name for field in fields(dataclass))
+        table = Table(
+            table_name=table,
+            table_columns=dataclass_fields,
+            dataclass_objects=dataclass_objects,
+        )
 
         # pg_conn.insert_data(table_metadata=table_meta, table_rows=table_rows)
 
@@ -45,8 +40,13 @@ def load_from_sqlite(sqlite_conn: SQLiteConnection, pg_conn: PostgresConnection)
 if __name__ == '__main__':
     dotenv.load_dotenv()
 
-    config = configparser.ConfigParser()
-    config.read('app.ini')
+    database_tables = {
+        'film_work': FilmWork,
+        # 'person': Person,
+        # 'person_film_work': PersonFilmWork,
+        # 'genre': Genre,
+        # 'genre_film_work': GenreFilmWork,
+    }
 
     sqlite_dbname = os.getenv('SQLITE_DB_NAME')
 
@@ -61,4 +61,4 @@ if __name__ == '__main__':
 
     with closing(SQLiteConnection(sqlite_dbname, package_limit=1000)) as sqlite_conn:
         with closing(PostgresConnection(dsn_postgres)) as pg_conn:
-            load_from_sqlite(sqlite_conn, pg_conn)
+            load_from_sqlite(sqlite_conn, pg_conn, tables=database_tables)
