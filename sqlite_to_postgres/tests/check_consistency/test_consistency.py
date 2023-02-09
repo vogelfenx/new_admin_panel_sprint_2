@@ -32,7 +32,7 @@ class TestDatabaseConsistency(unittest.TestCase):
         self.sqlite_connection = sqlite3.connect(dsn_sqlite, detect_types=sqlite3.PARSE_DECLTYPES)
         self.sqlite_cursor = self.sqlite_connection.cursor()
 
-        self.tables = ('film_work',)
+        self.tables = ('film_work', 'person', 'genre', 'person_film_work', 'genre_film_work')
 
     def tearDown(self):
         """Cleanup test environment."""
