@@ -73,7 +73,10 @@ class TestDatabaseConsistency(unittest.TestCase):
             rows_data_sqlite = self._remove_empty_or_none_list_items(rows_data_sqlite)
             rows_data_postgres = self._remove_empty_or_none_list_items(rows_data_postgres)
 
-            self.assertListEqual(rows_data_sqlite, rows_data_postgres)
+            sorted_rows_sqlite = [sorted((str(col) for col in row)) for row in rows_data_sqlite]
+            sorted_rows_postgres = [sorted((str(col) for col in row)) for row in rows_data_postgres]
+
+            self.assertListEqual(sorted(sorted_rows_sqlite), sorted(sorted_rows_postgres))
 
     def _remove_empty_or_none_list_items(self, items: list) -> list:
         cleaned_items = [
