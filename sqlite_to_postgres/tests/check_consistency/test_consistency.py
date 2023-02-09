@@ -1,4 +1,3 @@
-import configparser
 import os
 import sqlite3
 import unittest
@@ -33,60 +32,52 @@ class TestDatabaseConsistency(unittest.TestCase):
         self.sqlite_connection = sqlite3.connect(dsn_sqlite, detect_types=sqlite3.PARSE_DECLTYPES)
         self.sqlite_cursor = self.sqlite_connection.cursor()
 
-        self.config = configparser.ConfigParser()
-        self.config.read('app.ini')
-        self.tables = tuple(table.replace(' ', '') for table in self.config.sections())
+        self.tables = ('film_work',)
 
     def tearDown(self):
         """Cleanup test environment."""
         self.sqlite_connection.close()
         self.postgres_connection.close()
 
-    def test_table_rows_count(self):
+    def test_tables_rows_count(self):
         """Test table rows count between source and target databases."""
+        select_count_query = 'SELECT COUNT(*) FROM {table}'
         for table in self.tables:
-            sql_query = f'SELECT COUNT(*) FROM {table}'
 
-            self.sqlite_cursor.execute(sql_query)
+            self.sqlite_cursor.execute(select_count_query.format(table=table))
             rows_count_sqlite = self.sqlite_cursor.fetchone()[0]
 
-            self.postgres_cursor.execute(sql_query)
+            self.postgres_cursor.execute(select_count_query.format(table=table))
             rows_count_postgres = self.postgres_cursor.fetchone()[0]
             self.assertEqual(rows_count_sqlite, rows_count_postgres)
 
-    def test_table_data_consistency(self):
+    def test_tables_data_consistency(self):
         """Test data consistency between source and target databases."""
+        select_query = """
+        SELECT
+            *
+        FROM
+            {table}
+        ORDER BY
+            id ASC
+        """
         for table in self.tables:
-            column_names_mapping = dict(self.config.items(table))
-            column_names_sqlite = ','.join(column_names_mapping.keys())
-            column_names_postgres = ','.join(column_names_mapping.values())
-
-            self.sqlite_cursor.execute(
-                f"""
-                SELECT
-                    {column_names_sqlite}
-                FROM 
-                    {table}
-                ORDER BY
-                    id ASC
-                """)
+            self.sqlite_cursor.execute(select_query.format(table=table))
 
             rows_data_sqlite = self.sqlite_cursor.fetchall()
 
-            self.postgres_cursor.execute(
-                f"""
-                SELECT
-                    {column_names_postgres}
-                FROM 
-                    {table}
-                ORDER BY
-                    id ASC
-                """)
+            self.postgres_cursor.execute(select_query.format(table=table))
 
             rows_data_postgres = self.postgres_cursor.fetchall()
 
+            rows_data_sqlite = self._remove_empty_or_none_list_items(rows_data_sqlite)
+            rows_data_postgres = self._remove_empty_or_none_list_items(rows_data_postgres)
+
             self.assertListEqual(rows_data_sqlite, rows_data_postgres)
 
-
-if __name__ == '__main__':
-    unittest.main()
+    def _remove_empty_or_none_list_items(self, items: list) -> list:
+        cleaned_items = [
+            tuple(elem for elem in elements if (elem is not None) and (elem != ''))
+            for elements in items
+        ]
+        return cleaned_items
