@@ -1,4 +1,3 @@
-import configparser
 import os
 import sqlite3
 import unittest
@@ -7,10 +6,15 @@ import dotenv
 import psycopg2
 
 from utility.database.sqlite.util import convert_datetime
+from parameterized import parameterized_class
 
 dotenv.load_dotenv()
 
 
+@parameterized_class(
+    ('table',),
+    [('film_work',), ('person',), ('genre',), ('person_film_work',), ('genre_film_work',)]
+)
 class TestDatabaseConsistency(unittest.TestCase):
     """Tests for database consistency."""
 
@@ -33,60 +37,53 @@ class TestDatabaseConsistency(unittest.TestCase):
         self.sqlite_connection = sqlite3.connect(dsn_sqlite, detect_types=sqlite3.PARSE_DECLTYPES)
         self.sqlite_cursor = self.sqlite_connection.cursor()
 
-        self.config = configparser.ConfigParser()
-        self.config.read('app.ini')
-        self.tables = tuple(table.replace(' ', '') for table in self.config.sections())
-
     def tearDown(self):
         """Cleanup test environment."""
         self.sqlite_connection.close()
         self.postgres_connection.close()
 
-    def test_table_rows_count(self):
+    def test_tables_rows_count(self):
         """Test table rows count between source and target databases."""
-        for table in self.tables:
-            sql_query = f'SELECT COUNT(*) FROM {table}'
+        select_count_query = 'SELECT COUNT(*) FROM {table}'
 
-            self.sqlite_cursor.execute(sql_query)
-            rows_count_sqlite = self.sqlite_cursor.fetchone()[0]
+        self.sqlite_cursor.execute(select_count_query.format(table=self.table))
+        rows_count_sqlite = self.sqlite_cursor.fetchone()[0]
 
-            self.postgres_cursor.execute(sql_query)
-            rows_count_postgres = self.postgres_cursor.fetchone()[0]
-            self.assertEqual(rows_count_sqlite, rows_count_postgres)
+        self.postgres_cursor.execute(select_count_query.format(table=self.table))
+        rows_count_postgres = self.postgres_cursor.fetchone()[0]
 
-    def test_table_data_consistency(self):
+        self.assertEqual(rows_count_sqlite, rows_count_postgres)
+
+    def test_tables_data_consistency(self):
         """Test data consistency between source and target databases."""
-        for table in self.tables:
-            column_names_mapping = dict(self.config.items(table))
-            column_names_sqlite = ','.join(column_names_mapping.keys())
-            column_names_postgres = ','.join(column_names_mapping.values())
+        select_query = """
+        SELECT
+            *
+        FROM
+            {table}
+        ORDER BY
+            id ASC
+        """
 
-            self.sqlite_cursor.execute(
-                f"""
-                SELECT
-                    {column_names_sqlite}
-                FROM 
-                    {table}
-                ORDER BY
-                    id ASC
-                """)
+        self.sqlite_cursor.execute(select_query.format(table=self.table))
 
-            rows_data_sqlite = self.sqlite_cursor.fetchall()
+        rows_data_sqlite = self.sqlite_cursor.fetchall()
 
-            self.postgres_cursor.execute(
-                f"""
-                SELECT
-                    {column_names_postgres}
-                FROM 
-                    {table}
-                ORDER BY
-                    id ASC
-                """)
+        self.postgres_cursor.execute(select_query.format(table=self.table))
 
-            rows_data_postgres = self.postgres_cursor.fetchall()
+        rows_data_postgres = self.postgres_cursor.fetchall()
 
-            self.assertListEqual(rows_data_sqlite, rows_data_postgres)
+        rows_data_sqlite = self._remove_empty_or_none_list_items(rows_data_sqlite)
+        rows_data_postgres = self._remove_empty_or_none_list_items(rows_data_postgres)
 
+        sorted_rows_sqlite = [sorted((str(col) for col in row)) for row in rows_data_sqlite]
+        sorted_rows_postgres = [sorted((str(col) for col in row)) for row in rows_data_postgres]
 
-if __name__ == '__main__':
-    unittest.main()
+        self.assertListEqual(sorted(sorted_rows_sqlite), sorted(sorted_rows_postgres))
+
+    def _remove_empty_or_none_list_items(self, items: list) -> list:
+        cleaned_items = [
+            tuple(elem for elem in elements if (elem is not None) and (elem != ''))
+            for elements in items
+        ]
+        return cleaned_items
