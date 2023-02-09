@@ -39,7 +39,8 @@ class PostgresConnection:
         table_values = ((list(asdict(data_row).values())) for data_row in data_objects)
 
         insert_query = f"""
-        INSERT INTO {table_name} ({table_columns}) VALUES %s;
+        INSERT INTO {table_name} ({table_columns}) VALUES %s
+        ON CONFLICT DO NOTHING;
         """
 
         execute_values(self.cursor, insert_query, table_values)
