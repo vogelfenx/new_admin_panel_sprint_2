@@ -3,7 +3,7 @@ from contextlib import closing
 from dataclasses import fields
 
 import dotenv
-from database.postgres.dataclasses import FilmWork
+from database.postgres.dataclasses import FilmWork, Person, Genre
 from database.postgres.postgres_db_handler import PostgresConnection
 from database.sqlite.sqlite_db_handler import SQLiteConnection
 from database.table_dataclasses import Table
@@ -43,8 +43,8 @@ if __name__ == '__main__':
     database_tables = {
         'film_work': FilmWork,
         'person': Person,
+        'genre': Genre,
         # 'person_film_work': PersonFilmWork,
-        # 'genre': Genre,
         # 'genre_film_work': GenreFilmWork,
     }
 

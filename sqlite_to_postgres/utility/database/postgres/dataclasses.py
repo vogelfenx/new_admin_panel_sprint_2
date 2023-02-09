@@ -36,3 +36,11 @@ class Person(MixinId, MixinDate):
 
     full_name: str
     gender: str = field(default='')
+
+
+@dataclass(frozen=True)
+class Genre(MixinId, MixinDate):
+    """Dataclass for table Genre in postgres schema."""
+
+    name: str
+    description: str = field(default='')
