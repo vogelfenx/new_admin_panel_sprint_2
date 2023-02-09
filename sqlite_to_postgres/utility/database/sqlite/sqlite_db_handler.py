@@ -43,7 +43,7 @@ class SQLiteConnection:
         try:
             cursor.execute(f'SELECT * FROM {from_table}')
         except sqlite3.Error as error:
-            logging.error('sqlite3.Error: %s', error.args)
+            logging.error('%s: %s', error.__class__.__name__, error)
             raise error
 
         while True:
@@ -77,5 +77,5 @@ class SQLiteConnection:
 
         if not is_table_exists:
             error_message = f"table doesn't exist: {table_name}"
-            logging.error('sqlite3.OperationalError: %s', error_message)
+            logging.error('%s: %s', sqlite3.OperationalError.__name__, error_message)
             raise sqlite3.OperationalError(error_message)
