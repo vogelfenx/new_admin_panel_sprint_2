@@ -7,6 +7,7 @@ name = "pypi"
 psycopg2 = "*"
 python-dotenv = "*"
 iso8601 = "*"
+parameterized = "*"
 
 [dev-packages]
 memory-profiler = "*"

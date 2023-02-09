@@ -6,10 +6,15 @@ import dotenv
 import psycopg2
 
 from utility.database.sqlite.util import convert_datetime
+from parameterized import parameterized_class
 
 dotenv.load_dotenv()
 
 
+@parameterized_class(
+    ('table',),
+    [('film_work',), ('person',), ('genre',), ('person_film_work',), ('genre_film_work',)]
+)
 class TestDatabaseConsistency(unittest.TestCase):
     """Tests for database consistency."""
 
@@ -32,8 +37,6 @@ class TestDatabaseConsistency(unittest.TestCase):
         self.sqlite_connection = sqlite3.connect(dsn_sqlite, detect_types=sqlite3.PARSE_DECLTYPES)
         self.sqlite_cursor = self.sqlite_connection.cursor()
 
-        self.tables = ('film_work', 'person', 'genre', 'person_film_work', 'genre_film_work')
-
     def tearDown(self):
         """Cleanup test environment."""
         self.sqlite_connection.close()
@@ -42,14 +45,14 @@ class TestDatabaseConsistency(unittest.TestCase):
     def test_tables_rows_count(self):
         """Test table rows count between source and target databases."""
         select_count_query = 'SELECT COUNT(*) FROM {table}'
-        for table in self.tables:
 
-            self.sqlite_cursor.execute(select_count_query.format(table=table))
-            rows_count_sqlite = self.sqlite_cursor.fetchone()[0]
+        self.sqlite_cursor.execute(select_count_query.format(table=self.table))
+        rows_count_sqlite = self.sqlite_cursor.fetchone()[0]
 
-            self.postgres_cursor.execute(select_count_query.format(table=table))
-            rows_count_postgres = self.postgres_cursor.fetchone()[0]
-            self.assertEqual(rows_count_sqlite, rows_count_postgres)
+        self.postgres_cursor.execute(select_count_query.format(table=self.table))
+        rows_count_postgres = self.postgres_cursor.fetchone()[0]
+
+        self.assertEqual(rows_count_sqlite, rows_count_postgres)
 
     def test_tables_data_consistency(self):
         """Test data consistency between source and target databases."""
@@ -61,22 +64,22 @@ class TestDatabaseConsistency(unittest.TestCase):
         ORDER BY
             id ASC
         """
-        for table in self.tables:
-            self.sqlite_cursor.execute(select_query.format(table=table))
 
-            rows_data_sqlite = self.sqlite_cursor.fetchall()
+        self.sqlite_cursor.execute(select_query.format(table=self.table))
 
-            self.postgres_cursor.execute(select_query.format(table=table))
+        rows_data_sqlite = self.sqlite_cursor.fetchall()
 
-            rows_data_postgres = self.postgres_cursor.fetchall()
+        self.postgres_cursor.execute(select_query.format(table=self.table))
 
-            rows_data_sqlite = self._remove_empty_or_none_list_items(rows_data_sqlite)
-            rows_data_postgres = self._remove_empty_or_none_list_items(rows_data_postgres)
+        rows_data_postgres = self.postgres_cursor.fetchall()
 
-            sorted_rows_sqlite = [sorted((str(col) for col in row)) for row in rows_data_sqlite]
-            sorted_rows_postgres = [sorted((str(col) for col in row)) for row in rows_data_postgres]
+        rows_data_sqlite = self._remove_empty_or_none_list_items(rows_data_sqlite)
+        rows_data_postgres = self._remove_empty_or_none_list_items(rows_data_postgres)
 
-            self.assertListEqual(sorted(sorted_rows_sqlite), sorted(sorted_rows_postgres))
+        sorted_rows_sqlite = [sorted((str(col) for col in row)) for row in rows_data_sqlite]
+        sorted_rows_postgres = [sorted((str(col) for col in row)) for row in rows_data_postgres]
+
+        self.assertListEqual(sorted(sorted_rows_sqlite), sorted(sorted_rows_postgres))
 
     def _remove_empty_or_none_list_items(self, items: list) -> list:
         cleaned_items = [
