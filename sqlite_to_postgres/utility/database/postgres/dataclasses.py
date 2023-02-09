@@ -28,3 +28,11 @@ class FilmWork(MixinId, MixinDate):
     description: str = field(default='')
     rating: float = field(default=0)
     type: str = field(default='')
+
+
+@dataclass(frozen=True)
+class Person(MixinId, MixinDate):
+    """Dataclass for table Person in postgres schema."""
+
+    full_name: str
+    gender: str = field(default='')

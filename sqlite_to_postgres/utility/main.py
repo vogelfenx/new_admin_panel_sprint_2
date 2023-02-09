@@ -42,7 +42,7 @@ if __name__ == '__main__':
 
     database_tables = {
         'film_work': FilmWork,
-        # 'person': Person,
+        'person': Person,
         # 'person_film_work': PersonFilmWork,
         # 'genre': Genre,
         # 'genre_film_work': GenreFilmWork,
