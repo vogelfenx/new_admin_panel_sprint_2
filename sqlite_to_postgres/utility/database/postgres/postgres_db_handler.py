@@ -22,16 +22,16 @@ class PostgresConnection:
     def close(self):
         self.connection.close()
 
-    def insert_data(self, *, table_metadata: Table):
+    def insert_data(self, *, table: Table):
         """Insert rows to specified tables in target database.
 
         Args:
-            table_metadata (Table): target database metadata
             table_rows (list): rows to be inserted
+            table (Table): target database table object with references to data class objects
         """
-        table_name = table_metadata.table_name
-        table_columns = table_metadata.table_columns
-        data_objects = table_metadata.dataclass_objects
+        table_name = table.table_name
+        table_columns = table.table_columns
+        data_objects = table.dataclass_objects
 
         self._check_table_consistency(table_name=table_name)
 

@@ -34,7 +34,7 @@ def load_from_sqlite(sqlite_conn: SQLiteConnection, pg_conn: PostgresConnection,
             dataclass_objects=dataclass_objects,
         )
 
-        pg_conn.insert_data(table_metadata=table)
+        pg_conn.insert_data(table=table)
 
 
 if __name__ == '__main__':
