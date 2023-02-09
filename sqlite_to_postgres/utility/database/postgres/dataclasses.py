@@ -44,3 +44,13 @@ class Genre(MixinId, MixinDate):
 
     name: str
     description: str = field(default='')
+
+
+@dataclass(frozen=True)
+class PersonFilmWork(MixinId):
+    """Dataclass for table PersonFilmWork in postgres schema."""
+
+    film_work_id: uuid
+    person_id: uuid
+    created: datetime
+    role: str = field(default='')
