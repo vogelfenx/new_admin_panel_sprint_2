@@ -9,24 +9,22 @@ ENV DJANGO_SETTINGS_MODULE 'config.settings'
 
 WORKDIR /opt/app
 
-COPY run_uwsgi.sh run_uwsgi.sh
-COPY requirements.txt requirements.txt
+COPY docker-entrypoint.sh docker-entrypoint.sh
 COPY uwsgi/uwsgi.ini uwsgi.ini
+COPY requirements.txt requirements.txt
 
-RUN  mkdir -p /var/www/static/ \
-     && mkdir -p /var/www/media/ \
-     && mkdir -p /opt/app/static/ \
+RUN  mkdir -p /opt/app/static/ \
      && mkdir -p /opt/app/media/ \
      && pip install --upgrade pip \
      && pip install -r requirements.txt
 
 COPY . .
 
-RUN groupadd -r web && useradd -d /opt/app -r -g web web \
-    && chown web:web -R /opt/app
+RUN groupadd -r app && useradd -d /opt/app -r -g app app \
+    && chown app:app -R /opt/app
 
 EXPOSE 8000
 
-USER web
+USER app
 
-ENTRYPOINT ["uwsgi", "--strict", "--ini", "uwsgi.ini"]
+ENTRYPOINT ["./docker-entrypoint.sh"]
