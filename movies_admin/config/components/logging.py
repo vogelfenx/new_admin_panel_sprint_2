@@ -1,20 +1,28 @@
 LOGGING = {
-    'disable_existing_loggers': False,
     'version': 1,
+    'disable_existing_loggers': True,
+    'filters': {
+        'require_debug_true': {
+            '()': 'django.utils.log.RequireDebugTrue',
+        }
+    },
+    'formatters': {
+        'default': {
+            'format': '%(asctime)s %(levelname)s: %(message)s [in %(pathname)s:%(lineno)d]',
+        },
+    },
     'handlers': {
-        'console': {
+        'debug-console': {
             'class': 'logging.StreamHandler',
-            'level': 'DEBUG',
+            'formatter': 'default',
+            'filters': ['require_debug_true'],
         },
     },
     'loggers': {
-        '': {
-            'handlers': ['console'],
+        'django.db.backends': {
             'level': 'DEBUG',
+            'handlers': ['debug-console'],
             'propagate': False,
-        },
-        'django.db': {
-            'level': 'INFO',
-        },
+        }
     },
 }
