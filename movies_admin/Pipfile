@@ -12,6 +12,7 @@ django-split-settings = "*"
 django-debug-toolbar = "==3.4.0"
 
 [dev-packages]
+django-extensions = "*"
 
 [requires]
 python_version = "3.9"
