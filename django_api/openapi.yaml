@@ -14,7 +14,7 @@ paths:
           description: Номер страницы
           required: false
           schema:
-            type: string
+            type: integer
       responses:
         "200":
           description: ""
