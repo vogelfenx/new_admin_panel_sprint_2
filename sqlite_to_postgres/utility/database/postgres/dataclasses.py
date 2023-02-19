@@ -23,7 +23,7 @@ class FilmWork(MixinId, MixinDate):
     """Dataclass for table FilmWork in postgres schema."""
 
     title: str
-    creation_date: date
+    creation_date: date = field(default=None)
     certificate_file_path: str = field(default='')
     description: str = field(default='')
     rating: float = field(default=0)
