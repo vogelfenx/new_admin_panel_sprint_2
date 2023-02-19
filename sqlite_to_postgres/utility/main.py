@@ -25,7 +25,8 @@ def load_from_sqlite(sqlite_conn: SQLiteConnection, pg_conn: PostgresConnection,
         )
 
         formatted_rows = (pg_conn.remap_fields(dict(**row)) for row in table_rows)
-        dataclass_objects = (dataclass(**row) for row in formatted_rows)
+        cleaned_rows = (pg_conn.clean_none_columns_in_row(dict(**row)) for row in formatted_rows)
+        dataclass_objects = (dataclass(**row) for row in cleaned_rows)
 
         dataclass_fields = tuple(field.name for field in fields(dataclass))
         table = Table(

@@ -79,6 +79,10 @@ class PostgresConnection:
 
         return elem
 
+    def clean_none_columns_in_row(self, row: dict) -> dict:
+        cleaned_rows = {key: value for key, value in row.items() if value is not None}
+        return cleaned_rows
+
     def _check_table_consistency(self, *, table_name: str):
         """Check if the given table exists.
 
