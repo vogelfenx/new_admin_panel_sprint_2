@@ -1,0 +1,16 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+psycopg2 = "*"
+python-dotenv = "*"
+iso8601 = "*"
+parameterized = "*"
+
+[dev-packages]
+memory-profiler = "*"
+
+[requires]
+python_version = "3.9"
