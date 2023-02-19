@@ -6,6 +6,7 @@ load_dotenv()
 
 include(
     'components/base.py',
+    'components/corsheaders.py',
     'components/database.py',
     'components/localization.py',
     'components/auth.py',
