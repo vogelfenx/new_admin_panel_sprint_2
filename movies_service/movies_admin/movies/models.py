@@ -98,7 +98,8 @@ class PersonFilmwork(UUIDMixin):
 
     film_work = models.ForeignKey('Filmwork', on_delete=models.CASCADE)
     person = models.ForeignKey('Person', on_delete=models.CASCADE)
-    role = models.CharField(_('role'), max_length=10, choices=RoleTypes.choices)
+    role = models.CharField(_('role'), max_length=10,
+                            choices=RoleTypes.choices)
     created = models.DateTimeField(auto_now_add=True)
 
     class Meta:
