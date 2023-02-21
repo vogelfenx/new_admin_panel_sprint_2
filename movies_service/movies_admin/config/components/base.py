@@ -9,13 +9,13 @@ SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY')
 ALLOWED_HOSTS = ast.literal_eval(os.environ.get('ALLOWED_HOSTS'))
 
 INSTALLED_APPS = [
-    'corsheaders',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'corsheaders',
     'movies.apps.MoviesConfig',
 ]
 
