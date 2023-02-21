@@ -40,9 +40,11 @@ class MoviesListApi(BaseListView):
         return filmworks
 
     def get_context_data(self, *, object_list=None, **kwargs):
-        filmworks = list(object_list if object_list is not None else self.object_list)
+        filmworks = object_list if object_list is not None else self.object_list
+        results_count = filmworks.count()
         context = {
-            'results': filmworks,
+            'count': results_count,
+            'results': list(filmworks),
         }
         return context
 
