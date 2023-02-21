@@ -3,27 +3,44 @@ from django.db.models import Q, QuerySet
 from django.http import JsonResponse
 from django.views.generic.list import BaseListView
 
-from movies.models import Filmwork
+from movies.models import Filmwork, PersonFilmwork
 
 
 class MoviesListApi(BaseListView):
     model = Filmwork
     http_method_names = ['get']
 
-    # def get(self, request, *args, **kwargs):
-    #     self.object_list = self.get_queryset()
-    #     context = self.get_context_data()
-    #     return self.render_to_response(context)
-
     def get_queryset(self) -> QuerySet:
-        # filmwork = Filmwork.objects.values()
-        filmworks = Filmwork.objects.values()
+        genres = ArrayAgg('genres__name', distinct=True)
+        actors = ArrayAgg(
+            'persons__full_name',
+            filter=Q(persons__personfilmwork__role=PersonFilmwork.RoleTypes.ACTOR),
+            distinct=True,
+        )
+        directors = ArrayAgg(
+            'persons__full_name',
+            filter=Q(persons__personfilmwork__role=PersonFilmwork.RoleTypes.DIRECTOR),
+            distinct=True,
+        )
+        writers = ArrayAgg(
+            'persons__full_name',
+            filter=Q(persons__personfilmwork__role=PersonFilmwork.RoleTypes.WRITER),
+            distinct=True,
+        )
+
+        filmworks = Filmwork.objects.values(
+            'id', 'title', 'description', 'creation_date', 'rating',
+            'type',
+        ).annotate(
+            genres=genres,
+            actors=actors,
+            directors=directors,
+            writers=writers,
+        )
         return filmworks
 
     def get_context_data(self, *, object_list=None, **kwargs):
-        object_list = object_list if object_list is not None else self.object_list
-        filmworks = list(object_list)
-        # filmworks = [filmwork for filmwork in filmworks_queryset]
+        filmworks = list(object_list if object_list is not None else self.object_list)
         context = {
             'results': filmworks,
         }
