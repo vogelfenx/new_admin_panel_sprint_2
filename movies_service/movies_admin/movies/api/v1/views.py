@@ -46,7 +46,7 @@ class MoviesApiMixin:
 
 
 class MoviesListApi(MoviesApiMixin, BaseListView):
-    paginate_by = 10
+    paginate_by = 50
 
     def get(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
         if not self.request.GET.get('page'):
@@ -64,16 +64,9 @@ class MoviesListApi(MoviesApiMixin, BaseListView):
             context = {
                 'count': paginator.count,
                 'total_pages': paginator.num_pages,
+                'prev': page.previous_page_number() if page.has_previous() else None,
+                'next': page.next_page_number() if page.has_next() else None,
             }
-
-            if page.has_previous():
-                context.update({
-                    'prev': page.previous_page_number(),
-                })
-            if page.has_next():
-                context.update({
-                    'next': page.next_page_number(),
-                })
 
         else:
             context = {
