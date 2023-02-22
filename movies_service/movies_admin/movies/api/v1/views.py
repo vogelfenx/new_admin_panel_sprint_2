@@ -9,15 +9,9 @@ from django.views.generic.list import BaseListView
 from movies.models import Filmwork, PersonFilmwork
 
 
-class MoviesListApi(BaseListView):
+class MoviesApiMixin:
     model = Filmwork
     http_method_names = ['get']
-    paginate_by = 10
-
-    def get(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
-        if not self.request.GET.get('page'):
-            self.paginate_by = None
-        return super().get(request, *args, **kwargs)
 
     def get_queryset(self) -> QuerySet:
         genres = ArrayAgg('genres__name', distinct=True)
@@ -46,6 +40,18 @@ class MoviesListApi(BaseListView):
             writers=writers,
         )
         return filmworks
+
+    def render_to_response(self, context: dict, **response_kwargs: Any) -> JsonResponse:
+        return JsonResponse(context)
+
+
+class MoviesListApi(MoviesApiMixin, BaseListView):
+    paginate_by = 10
+
+    def get(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
+        if not self.request.GET.get('page'):
+            self.paginate_by = None
+        return super().get(request, *args, **kwargs)
 
     def get_context_data(self, *, object_list: QuerySet = None, **kwargs: Any) -> dict:
         filmworks = object_list if object_list is not None else self.object_list
@@ -80,5 +86,3 @@ class MoviesListApi(BaseListView):
 
         return context
 
-    def render_to_response(self, context: dict, **response_kwargs: Any) -> JsonResponse:
-        return JsonResponse(context)
