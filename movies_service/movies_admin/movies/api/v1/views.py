@@ -47,7 +47,7 @@ class MoviesListApi(BaseListView):
         )
         return filmworks
 
-    def get_context_data(self, *, object_list=None, **kwargs):
+    def get_context_data(self, *, object_list: QuerySet = None, **kwargs: Any) -> dict:
         filmworks = object_list if object_list is not None else self.object_list
         if self.paginate_by:
             paginator, page, filmworks, _ = self.paginate_queryset(
@@ -80,5 +80,5 @@ class MoviesListApi(BaseListView):
 
         return context
 
-    def render_to_response(self, context, **response_kwargs):
+    def render_to_response(self, context: dict, **response_kwargs: Any) -> JsonResponse:
         return JsonResponse(context)
