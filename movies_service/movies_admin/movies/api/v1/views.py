@@ -1,9 +1,9 @@
 from typing import Any
 
 from django.contrib.postgres.aggregates import ArrayAgg
-from django.core.paginator import Paginator
 from django.db.models import Q, QuerySet
 from django.http import HttpRequest, HttpResponse, JsonResponse
+from django.views.generic.detail import BaseDetailView
 from django.views.generic.list import BaseListView
 
 from movies.models import Filmwork, PersonFilmwork
@@ -86,3 +86,10 @@ class MoviesListApi(MoviesApiMixin, BaseListView):
 
         return context
 
+
+class MoviesDetailApi(MoviesApiMixin, BaseDetailView):
+    model = Filmwork
+    http_method_names = ['get']
+
+    def get_context_data(self, **kwargs):
+        return self.object
