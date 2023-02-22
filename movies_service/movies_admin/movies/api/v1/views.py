@@ -21,20 +21,19 @@ class MoviesListApi(BaseListView):
 
     def get_queryset(self) -> QuerySet:
         genres = ArrayAgg('genres__name', distinct=True)
-        actors = ArrayAgg(
-            'persons__full_name',
-            filter=Q(persons__personfilmwork__role=PersonFilmwork.RoleTypes.ACTOR),
-            distinct=True,
-        )
-        directors = ArrayAgg(
-            'persons__full_name',
-            filter=Q(persons__personfilmwork__role=PersonFilmwork.RoleTypes.DIRECTOR),
-            distinct=True,
-        )
-        writers = ArrayAgg(
-            'persons__full_name',
-            filter=Q(persons__personfilmwork__role=PersonFilmwork.RoleTypes.WRITER),
-            distinct=True,
+
+        person_roles = [
+            PersonFilmwork.RoleTypes.ACTOR,
+            PersonFilmwork.RoleTypes.DIRECTOR,
+            PersonFilmwork.RoleTypes.WRITER,
+        ]
+
+        (actors, directors, writers) = (
+            ArrayAgg(
+                'persons__full_name',
+                filter=Q(persons__personfilmwork__role=role),
+                distinct=True,
+            ) for role in person_roles
         )
 
         filmworks = Filmwork.objects.values(
@@ -51,7 +50,7 @@ class MoviesListApi(BaseListView):
     def get_context_data(self, *, object_list=None, **kwargs):
         filmworks = object_list if object_list is not None else self.object_list
         if self.paginate_by:
-            paginator, page, filmworks, is_paginated = self.paginate_queryset(
+            paginator, page, filmworks, _ = self.paginate_queryset(
                 filmworks,
                 self.paginate_by,
             )
