@@ -48,34 +48,21 @@ class MoviesApiMixin:
 class MoviesListApi(MoviesApiMixin, BaseListView):
     paginate_by = 50
 
-    def get(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
-        if not self.request.GET.get('page'):
-            self.paginate_by = None
-        return super().get(request, *args, **kwargs)
-
     def get_context_data(self, *, object_list: QuerySet = None, **kwargs: Any) -> dict:
         filmworks = object_list if object_list is not None else self.object_list
-        if self.paginate_by:
-            paginator, page, filmworks, _ = self.paginate_queryset(
-                filmworks,
-                self.paginate_by,
-            )
 
-            context = {
-                'count': paginator.count,
-                'total_pages': paginator.num_pages,
-                'prev': page.previous_page_number() if page.has_previous() else None,
-                'next': page.next_page_number() if page.has_next() else None,
-            }
+        paginator, page, filmworks, _ = self.paginate_queryset(
+            filmworks,
+            self.paginate_by,
+        )
 
-        else:
-            context = {
-                'count': filmworks.count(),
-            }
-
-        context.update({
+        context = {
+            'count': paginator.count,
+            'total_pages': paginator.num_pages,
+            'prev': page.previous_page_number() if page.has_previous() else None,
+            'next': page.next_page_number() if page.has_next() else None,
             'results': list(filmworks),
-        })
+        }
 
         return context
 
