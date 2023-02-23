@@ -6,6 +6,7 @@ from django.urls import include, path
 
 urlpatterns = i18n_patterns(
     path('admin/', admin.site.urls),
+    path('api/', include('movies.api.urls')),
 ) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 
