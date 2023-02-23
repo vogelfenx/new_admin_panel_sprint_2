@@ -1,20 +1,5 @@
-# Greetings traveller
+# Movies Service
 
-Мы рады, что вы приступили к выполнению 1 задания из курса Middle Python-разработчик.
- 
-Описание структуры и порядок выполнения проекта:
-1. `schema_design` - раздел c материалами для архитектуры базы данных.
-2. `movies_admin` - раздел с материалами для панели администратора.
-3. `sqlite_to_postgres` - раздел с материалами по миграции данных.
-
-Напоминаем, что все три части работы нужно сдавать на ревью одновременно.
-# Описание задания на 2 спринт
- 
-Описание структуры и порядок выполнения проекта:
-
-1. `docker_compose` — задача про настройку Nginx, Docker и Django.
-2. `django_api` — задача про реализацию API для выдачи информации о фильме.
-
-Напоминаем, что все части работы нужно сдавать на ревью одновременно.
-
-Успехов!
+1. [movies_service](movies_service/README.md) - movies service application (sprint 1 & 2).
+2. [schema_design](schema_design\README.md) - movies database architecture (sprint 1).
+3. [sqlite_to_postgres](sqlite_to_postgres/README.md) - data migration tool (sprint 1).
