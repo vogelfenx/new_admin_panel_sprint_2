@@ -10,10 +10,17 @@ from movies.models import Filmwork, PersonFilmwork
 
 
 class MoviesApiMixin:
+    """Mixin for movies api views."""
+
     model = Filmwork
     http_method_names = ['get']
 
     def get_queryset(self) -> QuerySet:
+        """Return prepared filmworks queryset.
+
+        Returns:
+            QuerySet: filmworks
+        """
         genres = ArrayAgg('genres__name', distinct=True)
 
         person_roles = [
@@ -41,14 +48,32 @@ class MoviesApiMixin:
         )
         return filmworks
 
-    def render_to_response(self, context: dict, **response_kwargs: Any) -> JsonResponse:
+    def render_to_response(self, context: list[dict]) -> JsonResponse:
+        """Return jsonified filmworks context.
+
+        Args:
+            context (list[dict]): List of filmworks as dictionary
+
+        Returns:
+            JsonResponse: response with jsonified context
+        """
         return JsonResponse(context)
 
 
 class MoviesListApi(MoviesApiMixin, BaseListView):
+    """List Api view for movies."""
+
     paginate_by = 50
 
-    def get_context_data(self, *, object_list: QuerySet = None, **kwargs: Any) -> dict:
+    def get_context_data(self, *, object_list: QuerySet = None) -> dict:
+        """Prepare the context for the response.
+
+        Args:
+            object_list (QuerySet, optional): list of movies. Defaults to None.
+
+        Returns:
+            dict: prepared context for the response
+        """
         filmworks = object_list if object_list is not None else self.object_list
 
         paginator, page, filmworks, _ = self.paginate_queryset(
@@ -68,8 +93,16 @@ class MoviesListApi(MoviesApiMixin, BaseListView):
 
 
 class MoviesDetailApi(MoviesApiMixin, BaseDetailView):
+    """Detail Api view for a movie."""
+
     model = Filmwork
     http_method_names = ['get']
 
-    def get_context_data(self, **kwargs):
-        return self.object
+    def get_context_data(self, **kwargs) -> dict:
+        """Return the movie object as a dictionary.
+
+        Returns:
+            dict: the movies object.
+        """
+        movie = kwargs['object']
+        return movie
