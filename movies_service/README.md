@@ -7,7 +7,7 @@ This project implements the following features of the Movies service:
 
 ## Setup
 
-Before running the application, set the required environment in the `.env` file.
+Before running the application, set the required environment in the `movies_admin\.env` file.
 
 The following environment variables are expected to be set.
 
@@ -44,9 +44,26 @@ SWAGGER_URL = 'swagger_url_to_pass_cors'
 
 ## Production environment
 
-Use the provided `Dockerfile` to enroll the application in production.
+To run the Movies service and all required components in a production environment, use the provided `docker-compose.yml` schema.
 
-The `docker-entrypoint.sh`script is the Entrypoint in the `Dockerfile`.
+The production environment uses the following components in dedicated containers/services:
+
+- `nginx` as a Nginx web server
+- `web-app` as a Movies Service application using `uWSGI` as an application web server
+- `postgres_db` as a PostgreSQL database
+
+### Setup
+
+Before running the `docker-compose.yml` file, set the required environment variables in the `.pg_env` file in the project root directory:
+
+```conf
+PG_USER = 'postgres_user'
+PG_PASSWORD = 'postgres_password'
+```
+
+The Movies service application itself uses `movies_admin\Dockerfile` to run the application inside a container.
+
+The `movies_admin\docker-entrypoint.sh` script is the Entrypoint in the `Dockerfile`.
 The script collects static files, performs migrations and runs the `uWSGI` as a web server.
 
 The `uWSGI` configuration file is located in the `uwsgi\uwsgi.ini` path.
