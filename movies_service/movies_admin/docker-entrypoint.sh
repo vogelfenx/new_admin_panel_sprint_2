@@ -3,6 +3,9 @@
 echo "Collect static files"
 python manage.py collectstatic --noinput
 
+echo "Compile translation messages"
+python manage.py compilemessages
+
 echo "Apply database migrations"
 while ! nc -z $DB_HOST $DB_PORT; do
       sleep 0.1

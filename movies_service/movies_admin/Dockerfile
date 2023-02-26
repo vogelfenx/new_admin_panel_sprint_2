@@ -17,6 +17,7 @@ RUN  mkdir -p /opt/app/static/ \
      && mkdir -p /opt/app/media/ \
      && apt update; apt install -y \
                         netcat \
+                        gettext \
      && pip install --no-cache-dir --upgrade pip \
      && pip install --no-cache-dir -r requirements.txt
 
