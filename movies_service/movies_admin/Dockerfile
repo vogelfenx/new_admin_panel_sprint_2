@@ -15,6 +15,8 @@ COPY requirements.txt requirements.txt
 
 RUN  mkdir -p /opt/app/static/ \
      && mkdir -p /opt/app/media/ \
+     && apt update; apt install -y \
+                        netcat \
      && pip install --no-cache-dir --upgrade pip \
      && pip install --no-cache-dir -r requirements.txt
 

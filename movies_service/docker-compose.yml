@@ -6,6 +6,7 @@ services:
       - staticfiles_volume:/opt/app/static/
     expose:
       - "8000"
+    env_file: ./movies_admin/.env
     depends_on:
       - postgres_db
 
