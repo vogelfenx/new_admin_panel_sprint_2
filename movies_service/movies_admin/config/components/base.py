@@ -36,6 +36,7 @@ ROOT_URLCONF = 'config.urls'
 WSGI_APPLICATION = 'config.wsgi.application'
 
 STATIC_URL = '/static/'
+STATIC_ROOT = '/opt/app/static/'
 
 MEDIA_URL = '/media/'
 
