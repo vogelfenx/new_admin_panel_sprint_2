@@ -1,0 +1,19 @@
+version: '3'
+services:
+  web-app:
+    build:
+      context: './movies_admin'
+      target: "development"
+    volumes:
+      - ./movies_admin:/opt/app
+    ports:
+      - "8000:8000"
+    environment:
+      DEBUG: 'True'
+    depends_on:
+      - postgres_db
+
+  nginx:
+    entrypoint: ["echo", "Service nginx disabled"]
+
+    

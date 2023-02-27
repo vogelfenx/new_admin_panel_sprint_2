@@ -1,7 +1,9 @@
 version: '3'
 services:
   web-app:
-    build: movies_admin
+    build:
+      context: './movies_admin'
+      target: "production"
     volumes:
       - staticfiles_volume:/opt/app/static/
     expose:
@@ -25,8 +27,8 @@ services:
     image: postgres:14.1-alpine
     restart: always
     env_file: .pg_env
-    ports:
-      - '5432:5432'
+    expose:
+      - "5432"
     volumes: 
       - postgres_db_volume:/var/lib/postgresql/data
     

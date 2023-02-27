@@ -9,11 +9,11 @@ flake8 = "==6.0"
 python-dotenv = "*"
 psycopg2 = "*"
 django-split-settings = "*"
-django-debug-toolbar = "==3.4.0"
 django-cors-headers = "*"
 
 [dev-packages]
 django-extensions = "*"
+django-debug-toolbar = "==3.4.0"
 
 [requires]
-python_version = "3.9"
+python_version = "3.10"
